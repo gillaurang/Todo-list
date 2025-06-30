@@ -5,6 +5,9 @@ const page = () => {
   const [title, settitle] = useState("")
   const [desc, setdesc] = useState("")
   const [maintask, setmaintask] = useState([])
+  const [clearedTasks, setClearedTasks] = useState([])
+
+
 
   const submitHandler = (e)=>{
     e.preventDefault();
@@ -18,12 +21,25 @@ const page = () => {
     setdesc("");
   };
 
+//Delete Task
   const deleteHandler = (i)=>{
     let copytask = [...maintask]
     copytask.splice(i,1)
     setmaintask(copytask)
   }
-  let renderTask = <h2>No Task Available</h2>
+  let renderTask = <h2>No task Available</h2>
+
+
+//Clear Task
+  const clearHandler = (i) => {
+    const taskToClear = maintask[i];
+    const updatedMainTasks = [...maintask];
+    updatedMainTasks.splice(i, 1);
+    setmaintask(updatedMainTasks);
+    setClearedTasks([...clearedTasks, taskToClear]);
+  }
+
+
 
   if(maintask.length>0){
     renderTask = maintask.map((t,i)=>{
@@ -38,6 +54,12 @@ const page = () => {
           deleteHandler(i)
         }}
          className='bg-red-400 text-white px-4 py-2 rounded font-bold '>Delete</button>
+
+        <button
+        onClick={()=>{
+          clearHandler(i)
+        }}
+         className='bg-gray-400 text-white px-4 py-2 rounded font-bold '>Clear Task</button> 
       </li>
     );
   })
@@ -67,8 +89,27 @@ const page = () => {
       <hr />
 
       <div className='p-8 bg-slate-300'>
+        <h2 className='text-2xl font-bold mb-4'>Add your Task</h2>
         <ul>
           {renderTask}
+        </ul>
+      </div>
+      <hr />
+       <div className='p-8 bg-slate-200 backdrop-blur-sm'>
+        <h2 className='text-2xl font-bold mb-4'>Cleared Tasks</h2>
+        <ul>
+          {clearedTasks.length === 0 ? (
+            <li>No cleared tasks</li>
+          ) : (
+            clearedTasks.map((t, i) => (
+              <li key={i} className='flex items-start justify-between mb-3'>
+                <div className='flex items-center justify-between w-2/3'>
+                  <h5 className='text-xl font-semibold'>{t.title}</h5>
+                  <h6 className='text-md font-normal'>{t.desc}</h6>
+                </div>
+              </li>
+            ))
+          )}
         </ul>
       </div>
     </>
